@@ -28,7 +28,7 @@
     <rosparam param="ignore_nodes">[/a1_driver_node, /a1_odom, /ar_track_alvar, /costmap_node, /depth_manager, /depth_to_laserscan, /joint_state_publisher, /move_a1, /non_markov_localization_a1, /map_server, /pointcloud_to_laserscan, /robot_state_publisher, /temp_frame, /temp_frame_2, /velodyne_nodelet_manager, /velodyne_nodelet_manager_cloud, /velodyne_nodelet_manager_driver, /velodyne_nodelet_manager_laserscan, /voxel_visualizer, /websocket]</rosparam>
 
     <!-- The list of nodes to synchronize. Only topics of this nodes are synchronized. The ~ignore_nodes, ~ignore_topics and ~ignore_services lists are processed first. -->
-    <rosparam param="sync_nodes">[/frontier_Server, /planner]</rosparam>
+    <rosparam param="sync_nodes">[/frontier_Server, /planner, /multisearch_action]</rosparam>
 
     <!-- The list of topics, which are to be ignored while a synchroniation. The ~ignore_nodes list is processed first.
     These are defaults and cannot be removed: ['/rosout', '/rosout_agg'] -->
