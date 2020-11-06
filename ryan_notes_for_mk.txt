@@ -1,0 +1,62 @@
+1) Situation in which NUC master_discovery cannot discover zilker-hsrb master
+  ### Need to follow steps of whiteboard Resources->3->Section 2.1 only
+  ### After that, Follow the step by step instructions of ROS-systems.pdf
+  section 3.2 READ CAREFULLY EACH STEP. Note that this document overlooks the
+  ip_forwarding. After those steps do not forget the `sudo service procps
+  restart`. THEN:
+  - On HSR:
+      - Terminal 1
+        `sbws`
+        `epuri`
+        `rosrun master_discovery_fkie master_discovery _mcast_group:=224.0.0.1`
+      - Terminal 2
+        `sbws`
+        `epuri`
+        `rostopic echo /master_discovery/changes` ### This will tell you the
+        name and uri of each ros master that HSR's copy of master_discovery
+        can see ### Note this will not discover the NUC roscore until you have
+        started NUC's copy of master_discovery
+    - On NUC:
+      - Terminal 1
+        `uws`
+        `epuri`
+        `roscore`
+      - Terminal 2
+        `auws`
+        `epuri`
+        `rosrun master_discovery_fkie master_discovery _mcast_group:=224.0.0.1`
+        ### At the time of this writing, you will see that NUC cannot discover
+        the HSR Master. To double check, you can try the similar instructions
+        to `rostopic echo /master_discovery/changes`
+
+
+2) Once both master_discovery nodes recognize each other, we need to continue to follow the ROS-Systems.pdf
+   (Note above we are following along the instructions at the beginning of
+   section 3.3 of that pdf). This means we will run the master_sync. 
+   - i.e. in another terminal of each computer (HSR, NUC) source and epuri as
+     before, and then run `rosrun master_sync_fkie master_sync`
+   - Next, we need to test that the sync is working 
+    - In one computer, publish the test topic `rostopic pub -r 1 /test
+      std_msgs/Int32 1` ... In the other, `rostopic list |grep "test"
+    - Now, run the topic in the other computer and make sure you can see it
+      from the other. 
+   - Now our master sync is working and the network is properly configured
+
+
+3) As just stated, the master discovery and sync are working. Now we need to
+   test the launch files Ryan made. Note that this repository has an a1 branch
+   and an hsr branch. The launch file
+   master_sync_fkie/launch/master_sync.launch is THE ONLY DIFFERENCE between
+   the two. The setup is designed with the assumption that the
+   multisearch_action and all related nodes (i.e frontier_server, etc.) are
+   running on the NUC. 
+   - Information the NUC Master needs from HSR:
+     - /dynamic_obstacle_map, a topic published by /base_path_planner
+     - /global_pose_hsr, a topic published by /non_markov_localization
+   - Information the HSR Master needs from NUC (i.e. needs from the
+     multisearch_action) 
+     - Some sort of GOAL, which is left to Minkyu to configure properly. The
+       important piece here is that the multimaster setup is under the
+       assumption that the the only NODE running on the NUC that the HSR needs
+       access to (i.e the NODE that is publishing the GOAL topic) is the
+       multisearch_action (search_service/scripts/map_manager.py)

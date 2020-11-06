@@ -71,7 +71,9 @@ class Main(object):
         # load interface
         self._load_interface()
         # subscribe to changes notifier topics
-        topic_names = interface_finder.get_changes_topic(masteruri_from_master())
+        #FIXME!!
+        #topic_names = interface_finder.get_changes_topic(masteruri_from_master())
+        topic_names=['master_discovery/changes']
         self.sub_changes = dict()
         '''@ivar: `dict` with topics {name: U{rospy.Subscriber<http://docs.ros.org/api/rospy/html/rospy.topics.Subscriber-class.html>}} publishes the changes of the discovered ROS masters.'''
         for topic_name in topic_names:
